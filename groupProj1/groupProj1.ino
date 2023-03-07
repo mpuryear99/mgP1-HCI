@@ -15,15 +15,27 @@ const uint btnPin = A0;
 const uint vmotorPin = 12;
 
 void printScore(uint score) {
-  // print "Score: ##" to first column of LCD
+  // print "Score: ##" to first row of LCD
+  lcd.setCursor(0, 1);
+  lcd.print("Score: " + String(score));
+  
   Serial.println("Game Over!");
   Serial.print("Score: ");
   Serial.println(score);
 }
 
 void printLives(uint lives) {
-  // print "Lives: #" to second column of LCD
+  // print "Lives: #" to second row of LCD
+  lcd.setCursor(0, 0);
+  lcd.print("Lives: " + String(lives));
+  
   // If lives == 0, also print Game/Over to right side of LCD (4x2)
+  if (lives == 0) {
+    lcd.setCursor(12,0);
+    lcd.print("GAME");
+    lcd.setCursor(12,1);
+    lcd.print("OVER");
+  }
 }
 
 void writeToLEDMatrix(uint8_t rows, uint8_t cols_r, uint8_t cols_g) {
@@ -344,4 +356,3 @@ void loop() {
     delay(30);
   }
 }
-
