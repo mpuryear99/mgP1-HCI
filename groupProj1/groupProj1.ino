@@ -1,19 +1,28 @@
 #include <stdint.h>
 #include "ICM_20948.h"
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(17, D2, D6, D5, D4, D3);
 
 ICM_20948_I2C myICM;
 #define WIRE_PORT Wire
 #define AD0_VAL 1
 
-const uint ledLatchPin = D3;
-const uint ledClkPin = D2;
-const uint ledDataPin = D4;
+const uint ledLatchPin = D7;
+const uint ledClkPin = D8;
+const uint ledDataPin = D9;
 const uint btnPin = A0;
 
 void printScore(uint score) {
+  // print "Score: ##" to first column of LCD
   Serial.println("Game Over!");
   Serial.print("Score: ");
   Serial.println(score);
+}
+
+void printLives(uint lives) {
+  // print "Lives: #" to second column of LCD
+  // If lives == 0, also print Game/Over to right side of LCD (4x2)
 }
 
 void writeToLEDMatrix(uint8_t rows, uint8_t cols_r, uint8_t cols_g) {
@@ -129,15 +138,9 @@ void setup() {
   writeToLEDMatrix(0xff, 0, 0xff);
   delay(1000);
 
-  int testpin = 17;
-  pinMode(testpin, OUTPUT);
-  int state = 1;
-  while(1) {
-    state = !state;
-    digitalWrite(testpin, state);
-    delay(500);
-  }
-
+  // Initialize LCD
+  lcd.begin(16,2);
+  lcd.print("test1");
 
   // Setup Gyro
   WIRE_PORT.begin();
