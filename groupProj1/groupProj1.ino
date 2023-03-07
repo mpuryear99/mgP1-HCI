@@ -8,10 +8,11 @@ ICM_20948_I2C myICM;
 #define WIRE_PORT Wire
 #define AD0_VAL 1
 
-const uint ledLatchPin = D7;
-const uint ledClkPin = D8;
+const uint ledClkPin = D7;
+const uint ledLatchPin = D8;
 const uint ledDataPin = D9;
 const uint btnPin = A0;
+const uint vmotorPin = 12;
 
 void printScore(uint score) {
   // print "Score: ##" to first column of LCD
@@ -128,7 +129,8 @@ void setup() {
   Serial.begin(115200);
 
   pinMode(btnPin, INPUT);
-  
+  pinMode(vmotorPin, OUTPUT);
+
   pinMode(ledLatchPin, OUTPUT);
   pinMode(ledClkPin, OUTPUT);
   pinMode(ledDataPin, OUTPUT);
@@ -137,6 +139,7 @@ void setup() {
   delay(1000);
   writeToLEDMatrix(0xff, 0, 0xff);
   delay(1000);
+
 
   // Initialize LCD
   lcd.begin(16,2);
@@ -254,6 +257,7 @@ void loop() {
     score++;
   }
 
+  printScore(score);
   clearLEDMatrix();
   delay(300);
 
@@ -292,14 +296,24 @@ void loop() {
       // check for incorrect match
       if ((pointer_x != tx) || (pointer_y != ty)) {
         writeToLEDMatrix(0xFF, 0xFF, 0);
-        if (--mistakes_left) {
+        digitalWrite(vmotorPin, 1);
+
+        mistakes_left--;
+        printLives(mistakes_left);
+
+        if (mistakes_left) {
           // try again
-          delay(100);
+          delay(150);
+          digitalWrite(vmotorPin, 0);
           continue;
         }
 
         // game over
-        printScore(score);
+        for (uint i = 0; i < 3; i++) {
+          digitalWrite(vmotorPin, 1);  delay(200);
+          digitalWrite(vmotorPin, 0);  delay(75);
+        }
+        // printScore(score);
 
         // wait for button press to start new game
         while (true) {
@@ -308,6 +322,8 @@ void loop() {
           delay(50);
           if (!digitalRead(btnPin)) continue;
           while (digitalRead(btnPin)) delay(10);
+
+          
 
           new_game = true;
           return;
