@@ -16,7 +16,7 @@ const uint vmotorPin = 12;
 
 void printScore(uint score) {
   // print "Score: ##" to first row of LCD
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   lcd.print("Score: " + String(score));
   
   Serial.println("Game Over!");
@@ -26,7 +26,7 @@ void printScore(uint score) {
 
 void printLives(uint lives) {
   // print "Lives: #" to second row of LCD
-  lcd.setCursor(0, 0);
+  lcd.setCursor(0, 1);
   lcd.print("Lives: " + String(lives));
   
   // If lives == 0, also print Game/Over to right side of LCD (4x2)
@@ -35,6 +35,11 @@ void printLives(uint lives) {
     lcd.print("GAME");
     lcd.setCursor(12,1);
     lcd.print("OVER");
+  } else {
+    lcd.setCursor(12,0);
+    lcd.print("    ");
+    lcd.setCursor(12,1);
+    lcd.print("    ");
   }
 }
 
@@ -288,6 +293,7 @@ void loop() {
 
   // guessing logic
   int mistakes_left = 3;
+  printLives(mistakes_left);
   for (int i = 0; i < num_targets; i++) {
     const uint8_t tx = target_x[i];
     const uint8_t ty = target_y[i];
