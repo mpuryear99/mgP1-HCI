@@ -19,9 +19,8 @@ void printScore(uint score) {
   lcd.setCursor(0, 0);
   lcd.print("Score: " + String(score));
   
-  Serial.println("Game Over!");
-  Serial.print("Score: ");
-  Serial.println(score);
+  // Serial.print("Score: ");
+  // Serial.println(score);
 }
 
 void printLives(uint lives) {
@@ -162,7 +161,7 @@ void setup() {
   lcd.begin(16,2);
   lcd.print("test1");
 
-  // Setup Gyro
+  // Setup Gyro (from IMU library example 7)
   WIRE_PORT.begin();
   WIRE_PORT.setClock(400000);
   while (1)
@@ -268,7 +267,7 @@ void loop() {
   if (new_game) {
     new_game = false;
     score = 0;
-    num_targets = 0;
+    num_targets = 1;
   } else {
     num_targets++;
     score++;
@@ -340,8 +339,6 @@ void loop() {
           delay(50);
           if (!digitalRead(btnPin)) continue;
           while (digitalRead(btnPin)) delay(10);
-
-          
 
           new_game = true;
           return;
